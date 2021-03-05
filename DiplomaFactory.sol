@@ -7,6 +7,8 @@ import "./Diploma.sol";
  */
 
 contract DiplomaFactory {
+    event CreateLog(address addr, uint256 timestamp);
+    
     function createBasicDiploma(
         address ownerValue,
         uint256 timestampValue,
@@ -21,5 +23,6 @@ contract DiplomaFactory {
         Diploma diploma = new Diploma(ownerValue, timestampValue, typeValue,
             nameValue, sidValue, startDateValue, endDateValue);
         diploma.setDiplomaData(departmentValue, majorValue);
+        emit CreateLog(diploma, timestampValue);
     }
 }
