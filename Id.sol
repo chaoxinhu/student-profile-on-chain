@@ -30,7 +30,7 @@ contract Id {
         // 颁发机构
         address issuer;
         // 学历证明类型
-        uint256 type;
+        uint256 trtype;
         uint256 startDate;
         uint256 endDate;
         address diplomaAddress;
@@ -76,39 +76,39 @@ contract Id {
     
     function addTrainingRecord(
         uint256 timestamp,
-        uint256 type,
+        uint256 trtype,
         uint256 startDate,
         uint256 endDate,
         address diplomaAddress
     ) public {
         address issuer = msg.sender;
-        uint dataLength = tr.length;
+        uint dataLength = trs.length;
         for (uint index = 0; index < dataLength; index++) {
-            TrainingRecord tr = trs[index];
-            if (msg.sender == tr.issuer && type == tr.type) {
+            TrainingRecord storage tr = trs[index];
+            if (msg.sender == tr.issuer && trtype == tr.trtype) {
                 // 已有相关记录，不加返回直接抛出
                 emit TrainingRecordChanged(RET_ALREADY_EXISTED, issuer, timestamp, index);
                 return;
             }
         }
         // 未找到已有学历，则增添一个
-        TrainingRecord _tr = TrainingRecord(issuer, type, startDate, endDate, diplomaAddress, timestamp);
+        TrainingRecord memory _tr = TrainingRecord(issuer, trtype, startDate, endDate, diplomaAddress, timestamp);
         trs.push(_tr);
         emit TrainingRecordChanged(RET_SUCCESS, issuer, timestamp, dataLength + 1);
     }
     
     function modifyTrainingRecord(
         uint256 timestamp,
-        uint256 type,
+        uint256 trtype,
         uint256 startDate,
         uint256 endDate,
         address diplomaAddress
     ) public {
         address issuer = msg.sender;
-        uint dataLength = tr.length;
+        uint dataLength = trs.length;
         for (uint index = 0; index < dataLength; index++) {
-            TrainingRecord tr = trs[index];
-            if (msg.sender == tr.issuer && type == tr.type) {
+            TrainingRecord storage tr = trs[index];
+            if (msg.sender == tr.issuer && trtype == tr.trtype) {
                 // 已有相关记录，进行修改即可
                 tr.startDate = startDate;
                 tr.endDate = endDate;
@@ -120,5 +120,25 @@ contract Id {
         }
         // 未找到已有学历，则返回错误不存在
         emit TrainingRecordChanged(RET_NOT_EXIST, issuer, timestamp, 0);
+    }
+    
+    function getAllTrainingRecord() public view returns (address[], uint256[], uint256[], uint256[], address[], uint256[]) {
+        uint dataLength = trs.length;
+        address[] memory issuers = new address[](dataLength);
+        address[] memory diplomaAddresses = new address[](dataLength);
+        uint256[] memory trtypes = new uint256[](dataLength);
+        uint256[] memory startDates = new uint256[](dataLength);
+        uint256[] memory endDates = new uint256[](dataLength);
+        uint256[] memory timestamps = new uint256[](dataLength);
+        for (uint index = 0; index < dataLength; index++) {
+            TrainingRecord storage tr = trs[index];
+            issuers[index] = tr.issuer;
+            trtypes[index] = tr.trtype;
+            startDates[index] = tr.startDate;
+            endDates[index] = tr.endDate;
+            diplomaAddresses[index] = tr.diplomaAddress;
+            timestamps[index] = tr.timestamp;
+        }
+        return (issuers, trtypes, startDates, endDates, diplomaAddresses, timestamps);
     }
 }
