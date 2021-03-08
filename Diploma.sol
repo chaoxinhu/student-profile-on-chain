@@ -19,7 +19,11 @@ contract Diploma {
     uint256 private endDate;
     
     bool private revoked;
-    
+
+    uint256 private RET_SUCCESS = 0;
+
+    event StateChanged(uint256 retCode, string state, bool stateNew);
+
     constructor (
         address ownerValue,
         uint256 timestampValue,
@@ -56,6 +60,7 @@ contract Diploma {
             return;
         }
         revoked = status;
+        emit StateChanged(RET_SUCCESS, "revoke", status);
     }
     
     function getAllInfo() public view returns (address, address, uint256, uint256, string, string, string, string, uint256, uint256, bool) {
