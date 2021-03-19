@@ -69,6 +69,7 @@ contract Id {
         // this is a sample which you can enroll other attribute modification
         if (msg.sender != owner) {
             emit BaseInfoChanged(RET_NO_PERMISSION, "name", nameValue, msg.sender);
+            return;
         }
         name = nameValue;
         emit BaseInfoChanged(RET_SUCCESS, "name", nameValue, msg.sender);
