@@ -26,8 +26,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class IdService {
 
-    @Autowired
     private Web3j web3j;
+
+    public void setWeb3j(Web3j web3j) {
+        this.web3j = web3j;
+    }
+
+    public Web3j getWeb3j() {
+        return this.web3j;
+    }
 
     // Deploy ID
     public String deployId(
@@ -35,10 +42,11 @@ public class IdService {
         String name,
         String sid,
         Integer birthDate,
-        Boolean gender
+        Boolean gender,
+        String privateKey
     ) {
         try {
-            Credentials credentials = Credentials.create(AddressConstants.DEFAULT_READ_PRIVATE_KEY);
+            Credentials credentials = Credentials.create(privateKey);
             Id id = Id.deploy(web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT),
                 owner, name, sid, new BigInteger(String.valueOf(birthDate), 10), gender).send();
             log.info("ID address is {}", id.getContractAddress());
