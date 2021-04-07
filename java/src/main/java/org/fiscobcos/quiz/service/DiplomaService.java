@@ -44,15 +44,20 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class DiplomaService {
 
-    @Autowired
     private Web3j web3j;
 
-    // Factory related methods starts here
+    public void setWeb3j(Web3j web3j) {
+        this.web3j = web3j;
+    }
+
+    public Web3j getWeb3j() {
+        return this.web3j;
+    }
 
     // Factory init
-    public String deployDiplomaFactory() {
+    public String deployDiplomaFactory(String privateKey) {
         try {
-            Credentials credentials = Credentials.create(AddressConstants.DEFAULT_READ_PRIVATE_KEY);
+            Credentials credentials = Credentials.create(privateKey);
             DiplomaFactory diplomaFactory = DiplomaFactory.deploy(web3j,
                 credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT)).send();
             log.info("Factory address is {}", diplomaFactory.getContractAddress());
